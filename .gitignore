@@ -9,6 +9,8 @@ __pycache__/
 
 # random
 .DS_Store
+simulator_data
+simulator.app/
 
 # Distribution / packaging
 .Python
