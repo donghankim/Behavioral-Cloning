@@ -7,9 +7,11 @@ from torch.utils.data import random_split
 from tqdm import tqdm
 
 from dataset import *
+from model import *
+from trainer import *
+
 
 def main():
-
     # reading data
     IMG_PATH = 'simulator_data/IMG'
     x_center = []
@@ -27,6 +29,7 @@ def main():
         speed = df.iloc[i]['speed']
         angle = df.iloc[i]['steering_angle']
 
+        #pdb.set_trace()
         x_center.append(center_img)
         x_left.append(left_img)
         x_right.append(right_img)
@@ -42,6 +45,14 @@ def main():
     center_test, center_val = random_split(center_dataset, [math.ceil(len(center_dataset)*0.8), math.floor(len(center_dataset)*0.2)])
     left_test, left_val = random_split(left_dataset, [math.ceil(len(left_dataset)*0.8), math.floor(len(left_dataset)*0.2)])
     right_test, right_val = random_split(right_dataset, [math.ceil(len(right_dataset)*0.8), math.floor(len(right_dataset)*0.2)])
+
+    # model + trainer init
+    SimpleNet = Simple(320, 160)
+    Runner = Trainer(SimpleNet, center_test)
+    Runner.train("none")
+
+
+
 
 
 
