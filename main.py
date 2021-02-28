@@ -13,6 +13,7 @@ from trainer import *
 
 def main():
     # reading data
+    linux_comp = True
     IMG_PATH = 'simulator_data/IMG'
     x_center = []
     x_left = []
@@ -23,13 +24,24 @@ def main():
 
     print("Reading Data...")
     for i in tqdm(range(len(df))):
-        center_img = cv2.imread(df.iloc[i]['center_path'].strip()) if os.path.exists(df.iloc[i]['center_path'].strip()) else print(f"no center img for idx:{i}")
-        left_img = cv2.imread(df.iloc[i]['left_path'].strip()) if os.path.exists(df.iloc[i]['left_path'].strip()) else print(f"no left img for idx:{i}")
-        right_img = cv2.imread(df.iloc[i]['right_path'].strip()) if os.path.exists(df.iloc[i]['right_path'].strip()) else print(f"no right img for idx:{i}")
+        if linux_comp:
+            center_token = df.iloc[i]['center_path'].strip().split("/")
+            center_img = cv2.imread(os.path.join(IMG_PATH, center_token[-1])) if os.path.exists(os.path.join(IMG_PATH, center_token[-1])) else print(f"no center img for idx:{i}")
+
+            left_token = df.iloc[i]['left_path'].strip().split("/")
+            left_img = cv2.imread(os.path.join(IMG_PATH, center_token[-1])) if os.path.exists(os.path.join(IMG_PATH, center_token[-1])) else print(f"no center img for idx:{i}")
+
+            right_token = df.iloc[i]['right_path'].strip().split("/")
+            right_img = cv2.imread(os.path.join(IMG_PATH, center_token[-1])) if os.path.exists(os.path.join(IMG_PATH, center_token[-1])) else print(f"no center img for idx:{i}")
+        else:
+            center_img = cv2.imread(df.iloc[i]['center_path'].strip()) if os.path.exists(df.iloc[i]['center_path'].strip()) else print(f"no center img for idx:{i}")
+            left_img = cv2.imread(df.iloc[i]['left_path'].strip()) if os.path.exists(df.iloc[i]['left_path'].strip()) else print(f"no left img for idx:{i}")
+            right_img = cv2.imread(df.iloc[i]['right_path'].strip()) if os.path.exists(df.iloc[i]['right_path'].strip()) else print(f"no right img for idx:{i}")
+        
         speed = df.iloc[i]['speed']
         angle = df.iloc[i]['steering_angle']
 
-        #pdb.set_trace()
+        # pdb.set_trace()
         x_center.append(center_img)
         x_left.append(left_img)
         x_right.append(right_img)
@@ -49,7 +61,9 @@ def main():
     # model + trainer init
     SimpleNet = Simple(320, 160)
     Runner = Trainer(SimpleNet, center_test)
-    Runner.train("none")
+    
+    # Runner.train("none")
+    Runner.test(center_val, 'base.pth')
 
 
 
