@@ -5,7 +5,7 @@ Update this file so that it works with pytorch.
 import argparse
 import base64
 from datetime import datetime
-import os
+import os, pdb
 import shutil
 
 import numpy as np
@@ -16,9 +16,12 @@ from PIL import Image
 from flask import Flask
 from io import BytesIO
 
-from keras.models import load_model
 import h5py
-from keras import __version__ as keras_version
+import torch
+import torchvision.transforms as transforms
+from torch.autograd import Variable
+from model import *
+
 
 sio = socketio.Server()
 app = Flask(__name__)
@@ -54,6 +57,7 @@ controller.set_desired(set_speed)
 
 @sio.on('telemetry')
 def telemetry(sid, data):
+    print("entered")
     if data:
         # The current steering angle of the car
         steering_angle = data["steering_angle"]
@@ -65,12 +69,25 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
-        steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
+        try:
+            transformations = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+                                    0.229, 0.224, 0.225]),
+            ])
 
-        throttle = controller.update(float(speed))
+            tensor_image = transformations(image_array)
+            tensor_image = tensor_image.view(1, 3, 320, 160)
+            image = Variable(tensor_image)
 
-        print(steering_angle, throttle)
-        send_control(steering_angle, throttle)
+            # predict the steering angle
+            steering_angle = model(image).view(-1).data.numpy()[0]
+            throttle = controller.update(float(speed))
+
+            print(steering_angle, throttle)
+            send_control(steering_angle, throttle)
+        except Exception as e:
+            print(e)
 
         # save frame
         if args.image_folder != '':
@@ -114,16 +131,13 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    # check that model Keras version is same as local Keras version
-    f = h5py.File(args.model, mode='r')
-    model_version = f.attrs.get('keras_version')
-    keras_version = str(keras_version).encode('utf8')
+    model = Simple(320, 160)
+    model_path = os.path.join('model_weights', args.model)
+    if os.path.exists(model_path):
+        model.load_state_dict(torch.load(model_path, map_location = torch.device('cpu')))
+    else:
+        print("Model weight path cannot be found...")
 
-    if model_version != keras_version:
-        print('You are using Keras version ', keras_version,
-              ', but the model was built using ', model_version)
-
-    model = load_model(args.model)
 
     if args.image_folder != '':
         print("Creating image folder at {}".format(args.image_folder))

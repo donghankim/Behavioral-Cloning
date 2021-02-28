@@ -30,8 +30,8 @@ class Trainer():
 
         self.WEIGHT_PATH = 'model_weights/'
 
-    def train(self, model_name):
-        model_path = os.path.join(self.WEIGHT_PATH, model_name)
+    def train(self, model_weight):
+        model_path = os.path.join(self.WEIGHT_PATH, model_weight)
         if os.path.exists(model_path):
             self.model.load_state_dict(torch.load(model_path))
         else:
@@ -47,7 +47,7 @@ class Trainer():
                 y_hat = self.model(x)
                 loss = self.criterion(y_hat, y)
                 loss_hist.append(loss.item())
-                
+
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
@@ -62,15 +62,15 @@ class Trainer():
     def val(self, dataset, model_weight):
         pass
 
-    def test(self, dataset, model_name):
+    def test(self, dataset, model_weight):
         data_loader = DataLoader(dataset, batch_size = 50)
-        model_path = os.path.join(self.WEIGHT_PATH, model_name)
+        model_path = os.path.join(self.WEIGHT_PATH, model_weight)
         if os.path.exists(model_path):
             self.model.load_state_dict(torch.load(model_path))
         else:
             print("No paths exists. Testing failed.")
             return
-        
+
         predictions = []
         cnt = 0
         test_loss = 0
@@ -83,13 +83,13 @@ class Trainer():
                 y_hat = self.model(x)
                 for i in range(len(y_hat)):
                     predictions.append(y_hat[i].item())
-        
+
                 test_loss += mean_squared_error(y_hat.cpu(), y.cpu())
                 cnt += 1
-        
+
         print(f"Test Loss: {round(test_loss/cnt, 2)}")
         pdb.set_trace()
-        
+
 
 
 
