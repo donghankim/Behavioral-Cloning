@@ -1,5 +1,6 @@
 """
-Update this file so that it works with pytorch.
+Try running this without model. see if it works first.
+Use the provided environemnt. if it doesnt work then...
 """
 
 import argparse
@@ -69,6 +70,7 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
+        """
         try:
             transformations = transforms.Compose([
                 transforms.ToTensor(),
@@ -81,13 +83,20 @@ def telemetry(sid, data):
             image = Variable(tensor_image)
 
             # predict the steering angle
-            steering_angle = model(image).view(-1).data.numpy()[0]
+            #steering_angle = model(image).view(-1).data.numpy()[0]
+            steering_angle = 0.3
             throttle = controller.update(float(speed))
 
             print(steering_angle, throttle)
             send_control(steering_angle, throttle)
         except Exception as e:
             print(e)
+        """
+
+        steering_angle = 0.3
+        throttle = controller.update(float(speed))
+        print(steering_angle, throttle)
+        send_control(steering_angle, throttle)
 
         # save frame
         if args.image_folder != '':
