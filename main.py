@@ -11,6 +11,14 @@ from model import *
 from trainer import *
 
 
+"""
+training is not working...
+1. maybe insert all three images to train?
+2. create a more powerful model (bring resent)
+3. image processing -> crop the images
+"""
+
+
 def main():
     # reading data
     linux_comp = False
@@ -49,24 +57,24 @@ def main():
         y.append(angle)
 
     # dataset creation
-    center_dataset = FrameDataset(x_center, y)
-    left_dataset = FrameDataset(x_left, y)
-    right_dataset = FrameDataset(x_right, y)
-    speed_dataset = LinearDataset(speed, y)
+    center_dataset = FrameDataset(x_center, y, True)
+    left_dataset = FrameDataset(x_left, y, True)
+    right_dataset = FrameDataset(x_right, y, True)
+    speed_dataset = LinearDataset(speed, y, True)
 
-    center_test, center_val = random_split(center_dataset, [math.ceil(len(center_dataset)*0.8), math.floor(len(center_dataset)*0.2)])
-    left_test, left_val = random_split(left_dataset, [math.ceil(len(left_dataset)*0.8), math.floor(len(left_dataset)*0.2)])
-    right_test, right_val = random_split(right_dataset, [math.ceil(len(right_dataset)*0.8), math.floor(len(right_dataset)*0.2)])
+    center_train, center_val = random_split(center_dataset, [math.ceil(len(center_dataset)*0.8), math.floor(len(center_dataset)*0.2)])
+    left_train, left_val = random_split(left_dataset, [math.ceil(len(left_dataset)*0.8), math.floor(len(left_dataset)*0.2)])
+    right_train, right_val = random_split(right_dataset, [math.ceil(len(right_dataset)*0.8), math.floor(len(right_dataset)*0.2)])
 
     # model + trainer init
-    SimpleNet = Simple(320, 160)
-    Runner = Trainer(SimpleNet, center_test)
+    # SimpleNet = Simple(320, 160)
+    # Runner = Trainer(SimpleNet)
+    Incep = Inception()
+    Runner = Trainer(Incep.model)
 
-    # Runner.train('base.pth', center_test)
-    Runner.train('base.pth', left_test)
-    Runner.train('base.pth', right_test)
-
-
+    Runner.train('base.pth', center_train)
+    # Runner.train('base.pth', left_train)
+    # Runner.train('base.pth', right_train)
 
 
 

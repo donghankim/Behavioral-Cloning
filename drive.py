@@ -1,8 +1,3 @@
-"""
-Try running this without model. see if it works first.
-Use the provided environemnt. if it doesnt work then...
-"""
-
 import argparse
 import base64
 from datetime import datetime

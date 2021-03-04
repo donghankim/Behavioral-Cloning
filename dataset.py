@@ -9,14 +9,23 @@ import pdb, os
 
 
 class FrameDataset(Dataset):
-    def __init__(self, X, Y):
+    def __init__(self, X, Y, downloaded = False):
         self.X = X
         self.labels = Y
-        self.transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
-                                 0.229, 0.224, 0.225]),
-        ])
+        if downloaded:
+            self.transfrom = transforms.Compose([
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+                                     0.229, 0.224, 0.225])
+            ])
+        else:
+            self.transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+                                    0.229, 0.224, 0.225]),
+            ])
 
     def show_img(self, img, denormalize=True):
         inv_normalize = transforms.Normalize(

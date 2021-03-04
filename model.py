@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torchvision.models as models
 import numpy as np
 import math
 import pdb
@@ -61,9 +62,11 @@ class Simple(nn.Module):
 
 
 
+# importing model architecture from torch
+class Inception():
+    def __init__(self):
+        self.model = models.inception_v3()
 
-class Perf(nn.Module):
-    pass
 
 
 class WithSpeed(nn.Module):
