@@ -19,7 +19,7 @@ from io import BytesIO
 
 import h5py
 import torch
-import torchvision.transforms as transforms
+from torchvision import transforms
 from torch.autograd import Variable
 from model import *
 
@@ -58,7 +58,6 @@ controller.set_desired(set_speed)
 
 @sio.on('telemetry')
 def telemetry(sid, data):
-    print("entered")
     if data:
         # The current steering angle of the car
         steering_angle = data["steering_angle"]
@@ -70,7 +69,7 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
-        """
+
         try:
             transformations = transforms.Compose([
                 transforms.ToTensor(),
@@ -78,23 +77,17 @@ def telemetry(sid, data):
                                     0.229, 0.224, 0.225]),
             ])
 
-            tensor_image = transformations(image_array)
-            tensor_image = tensor_image.view(1, 3, 320, 160)
-            image = Variable(tensor_image)
+            tensor_image = transformations(image_array).view(1, 3, 160, 320)
 
             # predict the steering angle
-            #steering_angle = model(image).view(-1).data.numpy()[0]
-            steering_angle = 0.3
+            steering_angle = model(tensor_image).view(-1).data.numpy()[0]
+            # steering_angle = 0.3
             throttle = controller.update(float(speed))
 
-            print(steering_angle, throttle)
-            send_control(steering_angle, throttle)
         except Exception as e:
             print(e)
-        """
 
-        steering_angle = 0.3
-        throttle = controller.update(float(speed))
+
         print(steering_angle, throttle)
         send_control(steering_angle, throttle)
 
@@ -144,6 +137,7 @@ if __name__ == '__main__':
     model_path = os.path.join('model_weights', args.model)
     if os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path, map_location = torch.device('cpu')))
+        model.eval()
     else:
         print("Model weight path cannot be found...")
 
@@ -164,3 +158,8 @@ if __name__ == '__main__':
 
     # deploy as an eventlet WSGI server
     eventlet.wsgi.server(eventlet.listen(('', 4567)), app)
+
+
+
+
+

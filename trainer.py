@@ -10,7 +10,7 @@ from tqdm import tqdm
 import os, pdb, time
 
 class Trainer():
-    def __init__(self, model, dataset):
+    def __init__(self, model):
         if torch.cuda.is_available():
             self.device = torch.device('cuda')
             self.map_location=self.device
@@ -21,16 +21,17 @@ class Trainer():
         self.model = model.to(self.device)
         print(f"Cuda Available: {next(self.model.parameters()).is_cuda}")
 
-        self.dataset = dataset
-        self.data_loader = DataLoader(self.dataset, batch_size=50, shuffle=True)
-
         self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001)
         self.epochs = 25
 
         self.WEIGHT_PATH = 'model_weights/'
 
-    def train(self, model_weight):
+    def prep_dataset(self, dataset, bsize, shuff):
+        dataloader = DataLoader(dataset, batch_size = bsize, shuffle = shuff)
+        return dataloader
+
+    def train(self, model_weight, dataset):
         model_path = os.path.join(self.WEIGHT_PATH, model_weight)
         if os.path.exists(model_path):
             self.model.load_state_dict(torch.load(model_path))
@@ -38,10 +39,12 @@ class Trainer():
             print("No path exists. Training from scratch.")
             model_path = os.path.join(self.WEIGHT_PATH, 'base.pth')
 
+        dataloader = self.prep_dataset(dataset, 50, True)
+
         loss_hist = []
         start_time = time.time()
         for epoch in tqdm(range(self.epochs)):
-            for imgs, labels in self.data_loader:
+            for imgs, labels in dataloader:
                 x, y = imgs.to(self.device), labels.to(self.device)
                 y = torch.unsqueeze(y, 0).view(-1, 1)
                 y_hat = self.model(x)
@@ -59,11 +62,7 @@ class Trainer():
         print(f"Training complete. Time taken: {round(end_time - start_time)//60} minuets")
 
 
-    def val(self, dataset, model_weight):
-        pass
-
-    def test(self, dataset, model_weight):
-        data_loader = DataLoader(dataset, batch_size = 50)
+    def test(self, model_weight, dataset):
         model_path = os.path.join(self.WEIGHT_PATH, model_weight)
         if os.path.exists(model_path):
             self.model.load_state_dict(torch.load(model_path))
@@ -71,13 +70,14 @@ class Trainer():
             print("No paths exists. Testing failed.")
             return
 
+        dataloader = self.prep_dataset(dataset, 1, False)
         predictions = []
         cnt = 0
         test_loss = 0
         self.model.eval()
         with torch.no_grad():
             print("Making predictions...")
-            for images, labels in tqdm(data_loader):
+            for images, labels in tqdm(dataloader):
                 x, y = images.to(self.device), labels.to(self.device)
                 y = torch.unsqueeze(y, 0).view(-1, 1)
                 y_hat = self.model(x)
@@ -88,7 +88,7 @@ class Trainer():
                 cnt += 1
 
         print(f"Test Loss: {round(test_loss/cnt, 2)}")
-        pdb.set_trace()
+
 
 
 
