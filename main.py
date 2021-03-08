@@ -21,7 +21,7 @@ training is not working...
 
 def main():
     # reading data
-    linux_comp = False
+    linux_comp = True
     IMG_PATH = 'simulator_data/IMG'
     x_center = []
     x_left = []
@@ -56,11 +56,11 @@ def main():
         x_speed.append(speed)
         y.append(angle)
 
-    # dataset creation
+    # dataset creation -> current problem here.
     center_dataset = FrameDataset(x_center, y, True)
     left_dataset = FrameDataset(x_left, y, True)
     right_dataset = FrameDataset(x_right, y, True)
-    speed_dataset = LinearDataset(speed, y, True)
+    speed_dataset = LinearDataset(speed, y)
 
     center_train, center_val = random_split(center_dataset, [math.ceil(len(center_dataset)*0.8), math.floor(len(center_dataset)*0.2)])
     left_train, left_val = random_split(left_dataset, [math.ceil(len(left_dataset)*0.8), math.floor(len(left_dataset)*0.2)])
@@ -69,10 +69,7 @@ def main():
     # model + trainer init
     # SimpleNet = Simple(320, 160)
     # Runner = Trainer(SimpleNet)
-    Incep = Inception()
-    Runner = Trainer(Incep.model)
 
-    Runner.train('base.pth', center_train)
     # Runner.train('base.pth', left_train)
     # Runner.train('base.pth', right_train)
 

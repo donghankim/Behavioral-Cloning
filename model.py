@@ -65,7 +65,7 @@ class Simple(nn.Module):
 # importing model architecture from torch
 class Inception():
     def __init__(self):
-        self.model = models.inception_v3()
+        self.model = models.inception_v3(progress = True)
 
 
 

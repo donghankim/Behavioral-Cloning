@@ -37,7 +37,7 @@ class Trainer():
             self.model.load_state_dict(torch.load(model_path))
         else:
             print("No path exists. Training from scratch.")
-            model_path = os.path.join(self.WEIGHT_PATH, 'base.pth')
+            model_path = os.path.join(self.WEIGHT_PATH, model_weight)
 
         dataloader = self.prep_dataset(dataset, 50, True)
 

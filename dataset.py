@@ -13,7 +13,8 @@ class FrameDataset(Dataset):
         self.X = X
         self.labels = Y
         if downloaded:
-            self.transfrom = transforms.Compose([
+            self.transform = transforms.Compose([
+                transforms.ToPILImage(),
                 transforms.Resize(256),
                 transforms.CenterCrop(224),
                 transforms.ToTensor(),
