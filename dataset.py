@@ -3,6 +3,7 @@ import cv2
 import torch
 from torchvision import transforms
 from torch.utils.data import Dataset
+import torch.nn.functional as F
 import matplotlib.pyplot as plt
 from skimage import io
 import pdb, os
@@ -65,7 +66,7 @@ class FrameDataset(Dataset):
 
         if self.transform:
             img_rgb = self.transform(img_rgb)
-            cropped_img = img_rgb[:, 60:]
+            cropped_img = F.interpolate(img_rgb[:, 60:130, :], size = 64)
         
         return (cropped_img, y_label)
 

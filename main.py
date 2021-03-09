@@ -61,24 +61,18 @@ def main():
         x_speed.append(speed)
         y.append(round(angle, 2))
 
+    # data augmentation
+    all_imgs, y_all = augment_data(all_imgs, y_all)
+
     # dataset creation
     all_dataset = FrameDataset(all_imgs, y_all)
-    center_dataset = FrameDataset(x_center, y, True)
-    left_dataset = FrameDataset(x_left, y, True)
-    right_dataset = FrameDataset(x_right, y, True)
-    speed_dataset = LinearDataset(speed, y)
-    
-    
+    speed_dataset = LinearDataset(speed, y) 
     all_train, all_val = random_split(all_dataset, [math.ceil(len(all_dataset)*0.9), math.floor(len(all_dataset)*0.1)])
-    center_train, center_val = random_split(center_dataset, [math.ceil(len(center_dataset)*0.8), math.floor(len(center_dataset)*0.2)])
-    left_train, left_val = random_split(left_dataset, [math.ceil(len(left_dataset)*0.8), math.floor(len(left_dataset)*0.2)])
-    right_train, right_val = random_split(right_dataset, [math.ceil(len(right_dataset)*0.8), math.floor(len(right_dataset)*0.2)])
-
-    # model + trainer init
+   
+    # training init
     sample_img = all_dataset[0][0]
     SimpleNet = Simple(sample_img.shape[2], sample_img.shape[1])
     Runner = Trainer(SimpleNet)
-    
     Runner.train('base_all.pth', all_dataset)
 
 
