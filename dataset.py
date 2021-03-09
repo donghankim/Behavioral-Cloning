@@ -36,6 +36,24 @@ class FrameDataset(Dataset):
 
         plt.imshow(np.transpose(img.numpy(), (1, 2, 0)))
         plt.show()
+    
+    # for README file
+    def save_fig(self, img, img1):
+        inv_normalize = transforms.Normalize(
+            mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225], std=[1/0.229, 1/0.224, 1/0.225])
+        
+        img = inv_normalize(img)
+        img1 = inv_normalize(img1)
+        fig, axes = plt.subplots(1, 2, figsize=(16, 8))
+        fig.subplots_adjust(hspace=0.1, wspace=0.2)
+        axes.ravel()
+        axes[0].imshow(img.permute(1,2,0))
+        axes[1].imshow(img1.permute(1,2,0))
+
+        axes[0].set_title("Original Image")
+        axes[1].set_title("Cropped Image")
+        plt.show()
+
 
     def __len__(self):
         return len(self.labels)
@@ -47,8 +65,9 @@ class FrameDataset(Dataset):
 
         if self.transform:
             img_rgb = self.transform(img_rgb)
-
-        return (img_rgb, y_label)
+            cropped_img = img_rgb[:, 60:]
+        
+        return (cropped_img, y_label)
 
 
 class LinearDataset(Dataset):

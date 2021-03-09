@@ -14,7 +14,7 @@ from utils import *
 
 def main():
     # reading data
-    linux_comp = False
+    linux_comp = True
     IMG_PATH = 'simulator_data/IMG'
     all_imgs = []
     x_center = []
@@ -51,15 +51,15 @@ def main():
         all_imgs.append(center_img)
         all_imgs.append(left_img)
         all_imgs.append(right_img)
-        y_all.append(angle)
-        y_all.append(angle)
-        y_all.append(angle)
+        y_all.append(round(angle, 2))
+        y_all.append(round(angle + 0.22, 2))
+        y_all.append(round(angle - 0.22, 2))
 
         x_center.append(center_img)
         x_left.append(left_img)
         x_right.append(right_img)
         x_speed.append(speed)
-        y.append(angle)
+        y.append(round(angle, 2))
 
     # dataset creation
     all_dataset = FrameDataset(all_imgs, y_all)
@@ -67,20 +67,19 @@ def main():
     left_dataset = FrameDataset(x_left, y, True)
     right_dataset = FrameDataset(x_right, y, True)
     speed_dataset = LinearDataset(speed, y)
-
+    
+    
     all_train, all_val = random_split(all_dataset, [math.ceil(len(all_dataset)*0.9), math.floor(len(all_dataset)*0.1)])
     center_train, center_val = random_split(center_dataset, [math.ceil(len(center_dataset)*0.8), math.floor(len(center_dataset)*0.2)])
     left_train, left_val = random_split(left_dataset, [math.ceil(len(left_dataset)*0.8), math.floor(len(left_dataset)*0.2)])
     right_train, right_val = random_split(right_dataset, [math.ceil(len(right_dataset)*0.8), math.floor(len(right_dataset)*0.2)])
 
     # model + trainer init
-    SimpleNet = Simple(320, 160)
+    sample_img = all_dataset[0][0]
+    SimpleNet = Simple(sample_img.shape[2], sample_img.shape[1])
     Runner = Trainer(SimpleNet)
-
-    # Runner.train('base.pth', left_train)
-    # Runner.train('base.pth', right_train)
-
-    view_hist(y_all)
+    
+    Runner.train('base_all.pth', all_dataset)
 
 
 if __name__ == '__main__':
