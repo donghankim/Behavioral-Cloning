@@ -16,8 +16,8 @@ import h5py
 import torch
 from torchvision import transforms
 from torch.autograd import Variable
+import torch.nn.functional as F
 from model import *
-
 
 sio = socketio.Server()
 app = Flask(__name__)
@@ -72,10 +72,11 @@ def telemetry(sid, data):
                                     0.229, 0.224, 0.225]),
             ])
 
-            tensor_image = transformations(image_array).view(1, 3, 160, 320)
+            tensor_image = transformations(image_array)
+            cropped_img = F.interpolate(tensor_image[:,60:130,:], size=64)
 
             # predict the steering angle
-            steering_angle = model(tensor_image).view(-1).data.numpy()[0]
+            steering_angle = model(cropped_img.unsqueeze(0)).view(-1).data.numpy()[0]
             # steering_angle = 0.3
             throttle = controller.update(float(speed))
 
@@ -128,7 +129,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    model = Simple(320, 160)
+    model = Simple(64, 70)
     model_path = os.path.join('model_weights', args.model)
     if os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path, map_location = torch.device('cpu')))
