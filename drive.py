@@ -18,6 +18,7 @@ from torchvision import transforms
 from torch.autograd import Variable
 import torch.nn.functional as F
 from model import *
+from dataset import process_img
 
 sio = socketio.Server()
 app = Flask(__name__)
@@ -64,26 +65,13 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
+        tensor_img = process_img(image_array)
 
-        try:
-            transformations = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
-                                    0.229, 0.224, 0.225]),
-            ])
-
-            tensor_image = transformations(image_array)
-            cropped_img = F.interpolate(tensor_image[:,60:130,:], size=64)
-
-            # predict the steering angle
-            steering_angle = model(cropped_img.unsqueeze(0)).view(-1).data.numpy()[0]
-            # steering_angle = 0.3
-            throttle = controller.update(float(speed))
-
-        except Exception as e:
-            print(e)
-
-
+        # predict the steering angle
+        steering_angle = model(tensor_img.unsqueeze(0)).view(-1).data.numpy()[0]
+        # steering_angle = 0.3
+        throttle = controller.update(float(speed))
+        
         print(steering_angle, throttle)
         send_control(steering_angle, throttle)
 

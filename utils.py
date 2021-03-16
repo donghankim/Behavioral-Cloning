@@ -25,14 +25,13 @@ def view_hist(y_values):
     plt.show()
     pdb.set_trace()
 
-# flip image also think about modiying the network architecture
+"""
 def augment_data(images, labels):
     aug_images = []
     aug_labels = []
     for i in range(len(images)):
         img, y = images[i], labels[i]
-        flipped_img = cv2.flip(img, 1)
-        flipped_y = -1*y
+        
 
         aug_images.append(img)
         aug_images.append(flipped_img)
@@ -40,10 +39,18 @@ def augment_data(images, labels):
         aug_labels.append(flipped_y)
 
     return aug_images, aug_labels
-    
+"""
 
+# for model creation
+def calc_out_size(current_w, current_h, k_size, pooling, stride):
+    w = int((current_w - k_size + 2*pooling)/stride + 1)
+    h = int((current_h - k_size + 2*pooling)/stride + 1)
+    return w, h
 
-
+def calc_pool_size(current_w, current_h, k_size, stride):
+    w = int((current_w - k_size)/stride + 1)
+    h = int((current_h - k_size)/stride + 1)
+    return w, h
 
 
 

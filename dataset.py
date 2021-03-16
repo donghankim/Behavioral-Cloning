@@ -8,6 +8,15 @@ import matplotlib.pyplot as plt
 from skimage import io
 import pdb, os
 
+# for drive.py
+def process_img(img):
+    shape = img.shape
+    crop_up = shape[0]//3
+    crop_down = shape[0]-25
+    cropped_img = img[crop_up:crop_down, 0:shape[1]]
+    cropped_img = cv2.resize(cropped_img,(200, 66), interpolation=cv2.INTER_AREA)
+    tensor_img = self.transform(cropped_img)
+    return tensor_img
 
 class FrameDataset(Dataset):
     def __init__(self, X, Y, downloaded = False):
@@ -54,21 +63,23 @@ class FrameDataset(Dataset):
         axes[0].set_title("Original Image")
         axes[1].set_title("Cropped Image")
         plt.show()
-
-
+    
     def __len__(self):
         return len(self.labels)
 
     def __getitem__(self, index):
         img = self.X[index]
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         y_label = torch.tensor(float(self.labels[index]))
+        shape = img.shape
 
         if self.transform:
-            img_rgb = self.transform(img_rgb)
-            cropped_img = F.interpolate(img_rgb[:, 60:130, :], size = 64)
+            crop_up = shape[0]//3
+            crop_down = shape[0]-25
+            cropped_img = img[crop_up:crop_down, 0:shape[1]]
+            cropped_img = cv2.resize(cropped_img,(200, 66), interpolation=cv2.INTER_AREA)
+            tensor_img = self.transform(cropped_img)
         
-        return (cropped_img, y_label)
+        return (tensor_img, y_label)
 
 
 class LinearDataset(Dataset):

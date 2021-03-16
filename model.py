@@ -1,10 +1,10 @@
+from utils import *
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
 import numpy as np
-import math
-import pdb
+import math, pdb
 
 class Simple(nn.Module):
     def __init__(self, w, h):
@@ -12,19 +12,19 @@ class Simple(nn.Module):
         self.w = w
         self.h = h
         self.conv1 = nn.Conv2d(3,60,3,1)
-        self.calc_out_size(3,0,1)
+        self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
 
         self.conv2 = nn.Conv2d(60, 30, 3, 1)
-        self.calc_out_size(3,0,1)
-        self.calc_pool_size(2,2)
+        self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
+        self.w, self.h = calc_pool_size(self.w, self.h, 2,2)
 
         self.conv3 = nn.Conv2d(30, 10, 3, 1)
-        self.calc_out_size(3,0,1)
+        self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
         self.conv3_bn = nn.BatchNorm2d(10)
 
         self.conv4 = nn.Conv2d(10, 5, 3, 1)
-        self.calc_out_size(3,0,1)
-        self.calc_pool_size(2,2)
+        self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
+        self.w, self.h = calc_pool_size(self.w, self.h, 2,2)
 
         self.fc1 = nn.Linear(self.w*self.h*5, 500)
         self.fc1_bn = nn.BatchNorm1d(500)
@@ -51,22 +51,44 @@ class Simple(nn.Module):
         return x
 
 
-    def calc_out_size(self, k_size, pooling, stride):
-        self.w = int((self.w - k_size + 2*pooling)/stride + 1)
-        self.h = int((self.h - k_size + 2*pooling)/stride + 1)
+class Nvidia(nn.Module):
+    def __init__(self, w, h):
+        super().__init__()
+        self.w = w
+        self.h = h
+        self.conv1 = nn.Conv2d(3,24,5,2)
+        self.w, self.h = calc_out_size(self.w, self.h, 5,0,2)
 
-    def calc_pool_size(self, k_size, stride):
-        self.w = int((self.w - k_size)/stride + 1)
-        self.h = int((self.h - k_size)/stride + 1)
+        self.conv2 = nn.Conv2d(24, 36, 5, 2)
+        self.w, self.h = calc_out_size(self.w, self.h, 5,0,2)
+    
+        self.conv3 = nn.Conv2d(36, 48, 5, 2)
+        self.w, self.h = calc_out_size(self.w, self.h, 5,0,2)
+        
+        self.conv4 = nn.Conv2d(48, 64, 3, 1)
+        self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
+
+        self.conv5 = nn.Conv2d(64, 64, 3, 1)
+        self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
+
+        self.fc1 = nn.Linear(self.w*self.h*64, 1164)
+        self.fc2 = nn.Linear(1164, 100)
+        self.fc3 = nn.Linear(100, 50)
+        self.fc4 = nn.Linear(50, 10)
+        self.fc5 = nn.Linear(10, 1) 
 
 
-
-# importing model architecture from torch
-class Inception():
-    def __init__(self):
-        self.model = models.inception_v3(progress = True)
-
-
-"""
-Try model without batchnorm in the fcn layer.
-"""
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = F.relu(self.conv4(x))
+        x = F.relu(self.conv5(x))
+        
+        x = x.view(-1, self.w*self.h*64)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc4(x))
+        x = F.relu(self.fc5(x))
+        return x
