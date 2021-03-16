@@ -11,6 +11,7 @@ from model import *
 from trainer import *
 from utils import *
 
+
 def read_data():
     # change this path if you want to try a different dataset
     IMG_PATH = 'simulator_data/udacity_data/IMG'
@@ -19,7 +20,7 @@ def read_data():
     # you also need to change this path
     df = pd.read_csv('simulator_data/udacity_data/driving_log.csv')
 
-    print("Reading Data...")
+    print("\nReading Data...")
     for i in tqdm(range(len(df))):
         center_token = df.iloc[i]['center'].strip().split("/")
         center_img = cv2.imread(os.path.join(IMG_PATH, center_token[-1])) if os.path.exists(
@@ -38,12 +39,13 @@ def read_data():
         left_img = cv2.cvtColor(left_img, cv2.COLOR_BGR2RGB)
         right_img = cv2.cvtColor(right_img, cv2.COLOR_BGR2RGB)
 
-        angle = round(df.iloc[i]['steering'], 2)
+        angle = round(df.iloc[i]['steering'], 2)*1.8
         left_angle = round(angle + 0.22, 2)
         right_angle = round(angle - 0.22, 2)
         
+        # to randomly get rid of zero angle images
         drop_prob = np.random.randn()
-        if angle == 0 and drop_prob < 2.5:
+        if angle == 0 and drop_prob < 1.5:
             continue
     
         all_imgs.append(center_img)
@@ -62,19 +64,25 @@ def read_data():
 
 def main():
     all_imgs, y_all = read_data()
+    augmented_img, augmented_y = augment_images(all_imgs, y_all)
     
     # dataset creation
     all_dataset = FrameDataset(all_imgs, y_all)
+    augmented_dataset = FrameDataset(augmented_img, augmented_y)
     all_train, all_val = random_split(all_dataset, [math.ceil(len(all_dataset)*0.9), math.floor(len(all_dataset)*0.1)])
+    aug_train, aug_val = random_split(augmented_dataset, [math.ceil(len(augmented_dataset)*0.9), math.floor(len(augmented_dataset)*0.1)])
 
+    # for debugging purposes
+    sample_all = all_dataset[0][0]
+    sample_aug = augmented_dataset[0][0]
+    
     # training init
-    sample_img = all_dataset[0][0]
-    Net = Navostha(sample_img.shape[2], sample_img.shape[1])
+    Net = Nvidia(sample_all.shape[2], sample_all.shape[1])
     Runner = Trainer(Net)
-    Runner.train('navostha.pth', all_train)
+    Runner.train('nvidia.pth', aug_train)
 
     # evaluation
-    Runner.test('navostha.pth', all_val)
+    Runner.test('nvidia.pth', aug_val)
 
 
 if __name__ == '__main__':

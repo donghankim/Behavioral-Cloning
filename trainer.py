@@ -19,11 +19,11 @@ class Trainer():
             self.map_location= self.device
 
         self.model = model.to(self.device)
-        print(f"Cuda Available: {next(self.model.parameters()).is_cuda}")
+        print(f"\nCuda Available: {next(self.model.parameters()).is_cuda}")
 
         self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001)
-        self.epochs = 50
+        self.epochs = 32
 
         self.WEIGHT_PATH = 'model_weights/'
 
@@ -39,9 +39,9 @@ class Trainer():
             print("No path exists. Training from scratch.")
             model_path = os.path.join(self.WEIGHT_PATH, model_weight)
 
-        dataloader = self.prep_dataset(dataset, 128, True)
+        dataloader = self.prep_dataset(dataset, 256, True)
 
-        loss_hist = []
+        epoch_hist = []
         start_time = time.time()
         for epoch in tqdm(range(self.epochs)):
             for imgs, labels in dataloader:
@@ -49,13 +49,14 @@ class Trainer():
                 y = torch.unsqueeze(y, 0).view(-1, 1)
                 y_hat = self.model(x)
                 loss = self.criterion(y_hat, y)
-                loss_hist.append(loss.item())
+                epoch_hist.append(loss.item())
 
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
 
-            print(f"loss for epoch {epoch+1}: {loss_hist[-1]}")
+            print(f"loss for epoch {epoch+1}: {sum(epoch_hist)/len(epoch_hist)}")
+            epoch_hist = []
 
         end_time = time.time()
         torch.save(self.model.state_dict(), model_path)

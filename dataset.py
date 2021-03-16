@@ -88,6 +88,7 @@ class FrameDataset(Dataset):
         return (tensor_img, y_label)
 
 
+# not used for this project
 class LinearDataset(Dataset):
     def __init__(self, X, Y):
         self.X = X
