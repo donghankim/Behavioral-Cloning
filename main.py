@@ -38,16 +38,14 @@ def read_data():
         left_img = cv2.cvtColor(left_img, cv2.COLOR_BGR2RGB)
         right_img = cv2.cvtColor(right_img, cv2.COLOR_BGR2RGB)
 
-        """
-        drop_prob = np.random.randn()
-        if angle == 0 and drop_prob < 2.5:
-            continue
-        """
-
         angle = round(df.iloc[i]['steering'], 2)
         left_angle = round(angle + 0.22, 2)
         right_angle = round(angle - 0.22, 2)
         
+        drop_prob = np.random.randn()
+        if angle == 0 and drop_prob < 2.5:
+            continue
+    
         all_imgs.append(center_img)
         all_imgs.append(left_img)
         all_imgs.append(right_img)
@@ -71,12 +69,12 @@ def main():
 
     # training init
     sample_img = all_dataset[0][0]
-    Net = Nvidia(sample_img.shape[2], sample_img.shape[1])
+    Net = Navostha(sample_img.shape[2], sample_img.shape[1])
     Runner = Trainer(Net)
-    Runner.train('nvidia.pth', all_train)
+    Runner.train('navostha.pth', all_train)
 
     # evaluation
-    Runner.test('nvidia.pth', all_val)
+    Runner.test('navostha.pth', all_val)
 
 
 if __name__ == '__main__':

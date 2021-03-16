@@ -23,7 +23,7 @@ class Trainer():
 
         self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001)
-        self.epochs = 25
+        self.epochs = 50
 
         self.WEIGHT_PATH = 'model_weights/'
 
@@ -39,7 +39,7 @@ class Trainer():
             print("No path exists. Training from scratch.")
             model_path = os.path.join(self.WEIGHT_PATH, model_weight)
 
-        dataloader = self.prep_dataset(dataset, 50, True)
+        dataloader = self.prep_dataset(dataset, 128, True)
 
         loss_hist = []
         start_time = time.time()
