@@ -11,14 +11,14 @@ class Simple(nn.Module):
         super().__init__()
         self.w = w
         self.h = h
-        self.conv1 = nn.Conv2d(3,30,3,1)
+        self.conv1 = nn.Conv2d(3,60,3,1)
         self.calc_out_size(3,0,1)
 
-        self.conv2 = nn.Conv2d(30, 15, 3, 1)
+        self.conv2 = nn.Conv2d(60, 30, 3, 1)
         self.calc_out_size(3,0,1)
         self.calc_pool_size(2,2)
 
-        self.conv3 = nn.Conv2d(15, 10, 3, 1)
+        self.conv3 = nn.Conv2d(30, 10, 3, 1)
         self.calc_out_size(3,0,1)
         self.conv3_bn = nn.BatchNorm2d(10)
 
@@ -42,7 +42,6 @@ class Simple(nn.Module):
         x = F.relu(self.conv3_bn(self.conv3(x)))
         x = F.relu(self.conv4(x))
         x = F.max_pool2d(x,2,2)
-        # pdb.set_trace()
         x = x.view(-1, self.w*self.h*5)
         x = F.relu(self.fc1_bn(self.fc1(x)))
         x = F.relu(self.fc2(x))
@@ -68,6 +67,6 @@ class Inception():
         self.model = models.inception_v3(progress = True)
 
 
-
-class WithSpeed(nn.Module):
-    pass
+"""
+Try model without batchnorm in the fcn layer.
+"""
