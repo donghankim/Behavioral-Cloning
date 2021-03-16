@@ -71,7 +71,7 @@ def telemetry(sid, data):
         steering_angle = model(tensor_img.unsqueeze(0)).view(-1).data.numpy()[0]
         # steering_angle = 0.3
         throttle = controller.update(float(speed))
-        
+
         print(steering_angle, throttle)
         send_control(steering_angle, throttle)
 
@@ -116,8 +116,7 @@ if __name__ == '__main__':
         help='Path to image folder. This is where the images from the run will be saved.'
     )
     args = parser.parse_args()
-
-    model = Simple(64, 70)
+    model = Nvidia(200, 66)
     model_path = os.path.join('model_weights', args.model)
     if os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path, map_location = torch.device('cpu')))

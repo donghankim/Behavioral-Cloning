@@ -10,12 +10,18 @@ import pdb, os
 
 # for drive.py
 def process_img(img):
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+            0.229, 0.224, 0.225]),
+    ])
     shape = img.shape
     crop_up = shape[0]//3
     crop_down = shape[0]-25
     cropped_img = img[crop_up:crop_down, 0:shape[1]]
-    cropped_img = cv2.resize(cropped_img,(200, 66), interpolation=cv2.INTER_AREA)
-    tensor_img = self.transform(cropped_img)
+    cropped_img = cv2.resize(cropped_img, (200, 66),
+                             interpolation=cv2.INTER_AREA)
+    tensor_img = transform(cropped_img)
     return tensor_img
 
 class FrameDataset(Dataset):
@@ -46,12 +52,12 @@ class FrameDataset(Dataset):
 
         plt.imshow(np.transpose(img.numpy(), (1, 2, 0)))
         plt.show()
-    
+
     # for README file
     def save_fig(self, img, img1):
         inv_normalize = transforms.Normalize(
             mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225], std=[1/0.229, 1/0.224, 1/0.225])
-        
+
         img = inv_normalize(img)
         img1 = inv_normalize(img1)
         fig, axes = plt.subplots(1, 2, figsize=(16, 8))
@@ -63,7 +69,7 @@ class FrameDataset(Dataset):
         axes[0].set_title("Original Image")
         axes[1].set_title("Cropped Image")
         plt.show()
-    
+
     def __len__(self):
         return len(self.labels)
 
@@ -78,7 +84,7 @@ class FrameDataset(Dataset):
             cropped_img = img[crop_up:crop_down, 0:shape[1]]
             cropped_img = cv2.resize(cropped_img,(200, 66), interpolation=cv2.INTER_AREA)
             tensor_img = self.transform(cropped_img)
-        
+
         return (tensor_img, y_label)
 
 
