@@ -19,7 +19,13 @@ I have uploaded a few model weights which you can use straight away. In order to
 ```python
 python drive.py model_name.pth
 ```
-The rest of this repository contains code for creating and training the neural network. I have tried to make it as readable and usable as possible.
+Keep in mind that you have to change the model (neural network) declaration inside the drive.py file if you wish to use your own model.
+
+In order to train a neural network, you can just run the main.py file. This code will automatically train a neural network of your choice.
+```python
+python main.py
+```
+Inside the main file, you can change the directory that contains your dataset (images) and you can also change or add own network architectures (all network architectures are stored in the model.py file). The rest of this repository contains code for creating and training the neural network. I have tried to make it as readable and usable as possible.
 
 ## Data Processing
 After reading in your data, you can see that the range of steering angles are not balanced. There are way to many 0.0 angle images, which will cause the network to output 0.0 for every single frame. Thus you first have to find a way to balance your dataset. I decided to randomly discard 85% of all 0.0 angles and images from the dataset. This might not be ideal, but it does balance the dataset. In addition, we have to include an offset angle to the left and right camera images. I didn't know how much offset I should I add, but after some googling I decided to offset the left camera angle by +0.22 and the right camera angle by -0.22. The histogram shows the image/angle distribution of the original dataset (left, center and right images). The reason why there is a spike on for angle -0.22, 0.00, and 0.22 is because these are the angles corresponding to the center image where the angle is 0.00.
@@ -32,14 +38,14 @@ After reading in your data, you can see that the range of steering angles are no
 Another issue with the dataset is the limited number of examples. Of course, you could technically record the simulator for hours and hours trying to collect as much data as you can, but thats just not efficient. Therefore, I decided to augment my data to include shiffted, brightness altered, shadowed and flipped images. Im not going to go in detail regarding the procedure to augment images since there is a ton of resources out there on the internet.
 
 <div align="center">
-  <img src = "media/data_aug.png" width="400" />
-  <img src="/media/aug_histogram.png" width="400" />
+<img src = "media/data_aug.png" />
 </div>
 
 After the augmentation, we can see from the histogram, the dataset is much more balanced and ready to be used to train our network. Finally, before inserting my images into the network, I cropped them and normalized them to help increase the speed of training (also to decrease the chances of overfitting).
 
 <div align="center">
-<img src="media/input_img.png" >
+<img src="/media/aug_histogram.png" width="400" >
+<img src="media/input_img.png" width ="400" >
 </div>
 
 ## Model Architecture & Training
