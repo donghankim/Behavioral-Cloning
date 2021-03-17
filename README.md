@@ -1,4 +1,4 @@
-# Behavioral_Cloning
+# Behavioral Cloning
 Using a provided simulator, a neural network is used to clone the driving behavior of a given user.
 
 ## Overview
@@ -28,6 +28,7 @@ I have include 6 different network architecures in the model.py file. Model Navo
 
 -- Image of network architecure
 
+Initially, I did try to normalize my images at input, but this proved to produce worse results. I also tried to add dropout in several layers, but again this did not produce good results. Therefore, I did not add any normalizations when training my network. However, by looking at the final result, the network does seem to generalize well on the simulator. Furthermore, using the RELU activation function also proved to produce undesirable results. It's interesting how changing the activation function to ELU produces much better results. I also trained my network for 25 epochs, making sure the network was not overfitting to the training data. 
 
 
 

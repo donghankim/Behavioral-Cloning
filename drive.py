@@ -116,7 +116,7 @@ if __name__ == '__main__':
         help='Path to image folder. This is where the images from the run will be saved.'
     )
     args = parser.parse_args()
-    model = CarDenseModel()
+    model = CarModel()
     model_path = os.path.join('model_weights', args.model)
     if os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path, map_location = torch.device('cpu')))
