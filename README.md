@@ -4,10 +4,6 @@ Using a provided simulator, a neural network is used to clone the driving behavi
 ## Overview
 Using a simulator, we can record the steering angle and speed of a moving car. The car in the simulator has three cameras: left, center and right. This setup is similar to the setup used by the paper published by Nvidia, [End to End Learning for Self-Driving Cars.](https://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) The basic idea is to map the image features from the three cameras to an appropriate steering angle. The steering angle is then sent to the simulator frame-by-frame.
 
-<div align="center">
-<img src="media/result.gif" >
-</div>
-
 ## Installation & Run
 The simulator I used is provided by Udacity (click [here](https://github.com/udacity/self-driving-car-sim) to install the simulator). You can record your own data from the simulator, or you can download the provided dataset from Udacity.
 
@@ -57,7 +53,12 @@ I have include 3 different network architecures in the model.py file. The Simple
 
 The Nvidia paper does not employ any kind of normalization. However, after extensive testing I found that without normalization the network fails to generalize. As a result, I have added normalization for all my convolutional layers. The initial inputs are also normalized by the mean and standard deviations employed in the ImageNet dataset. After that, batch normalization is applied. Furthermore, to further decrease any overfitting from occuring, I have also added two dropout layers in my network (one at the end of the convolution layers, and one in the third fully-connected layer).
 
-While training, I found that using 32 epochs produced the best results. Any less will result in underfitting, while any more could lead to overfitting. Moreover, I used the Adam optimizer as well as the MSELoss objective function to train my network. 
+While training, I found that using 32 epochs produced the best results. Any less will result in underfitting, while any more could lead to overfitting. Moreover, I used the Adam optimizer as well as the MSELoss objective function to train my network. The .gif file below showcases my result from this project.
+
+<div align="center">
+<img src="media/result.gif" >
+</div>
+
 
 
 
