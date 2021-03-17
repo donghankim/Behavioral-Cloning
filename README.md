@@ -46,7 +46,7 @@ After the augmentation, we can see from the histogram, the dataset is much more 
 I have include 3 different network architecures in the model.py file. The Simple model is simply a very simple convolutional network that is used to demonstrate the lack of effectvieness for simple models. The Nvidia model is my own implementation of the Nvidia model with my own imporvements. And finally, I have also added a model obtained from a different github user to compare their results with mine.
 
 <div align="center">
-<img src="media/model.png" >
+<img src="media/model.png" height = "500" >
 </div>
 
 The Nvidia paper does not employ any kind of normalization. However, after extensive testing I found that without normalization the network fails to generalize. As a result, I have added normalization for all my convolutional layers. The initial inputs are normalized by the mean and standard deviations employed in the ImageNet dataset. After that, batch normalization is applied. Furthermore, to further decrease any overfitting from occuring, I have also added two dropout layers in my network (one at the end of the convolution layers, and one in the third fully-connected layer).
