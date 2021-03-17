@@ -34,12 +34,13 @@ class Trainer():
     def train(self, model_weight, dataset):
         model_path = os.path.join(self.WEIGHT_PATH, model_weight)
         if os.path.exists(model_path):
+            print(f"{model_weight} exists. Building from previous weighths.")
             self.model.load_state_dict(torch.load(model_path))
         else:
             print("No path exists. Training from scratch.")
             model_path = os.path.join(self.WEIGHT_PATH, model_weight)
 
-        dataloader = self.prep_dataset(dataset, 256, True)
+        dataloader = self.prep_dataset(dataset, 512, True)
 
         epoch_hist = []
         start_time = time.time()

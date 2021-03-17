@@ -39,9 +39,9 @@ def read_data():
         left_img = cv2.cvtColor(left_img, cv2.COLOR_BGR2RGB)
         right_img = cv2.cvtColor(right_img, cv2.COLOR_BGR2RGB)
 
-        angle = round(df.iloc[i]['steering'], 2)*1.8
-        left_angle = round(angle + 0.22, 2)
-        right_angle = round(angle - 0.22, 2)
+        angle = df.iloc[i]['steering']
+        left_angle = angle + 0.22
+        right_angle = angle - 0.22
         
         # to randomly get rid of zero angle images
         drop_prob = np.random.randn()
@@ -77,12 +77,13 @@ def main():
     sample_aug = augmented_dataset[0][0]
     
     # training init
-    Net = Nvidia(sample_all.shape[2], sample_all.shape[1])
+    # Net = Nvidia(sample_aug.shape[2], sample_aug.shape[1])
+    Net = CarDenseModel()
     Runner = Trainer(Net)
-    Runner.train('nvidia.pth', aug_train)
+    Runner.train('cardensemodel.pth', augmented_dataset)
 
     # evaluation
-    Runner.test('nvidia.pth', aug_val)
+    Runner.test('cardensemodel.pth', aug_val)
 
 
 if __name__ == '__main__':
