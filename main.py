@@ -34,7 +34,7 @@ def read_data():
         right_img = cv2.imread(os.path.join(IMG_PATH, center_token[-1])) if os.path.exists(
             os.path.join(IMG_PATH, center_token[-1])) else print(f"no center img for idx:{i}")
 
-        # converting color code 
+        # converting color code
         center_img = cv2.cvtColor(center_img, cv2.COLOR_BGR2RGB)
         left_img = cv2.cvtColor(left_img, cv2.COLOR_BGR2RGB)
         right_img = cv2.cvtColor(right_img, cv2.COLOR_BGR2RGB)
@@ -42,18 +42,18 @@ def read_data():
         angle = df.iloc[i]['steering']
         left_angle = angle + 0.22
         right_angle = angle - 0.22
-        
+
         # to randomly get rid of zero angle images
         drop_prob = np.random.randn()
         if angle == 0 and drop_prob < 1.5:
             continue
-    
+
         all_imgs.append(center_img)
         all_imgs.append(left_img)
         all_imgs.append(right_img)
         all_imgs.append(cv2.flip(left_img, 1))
         all_imgs.append(cv2.flip(right_img, 1))
-    
+
         y_all.append(angle)
         y_all.append(left_angle)
         y_all.append(right_angle)
@@ -65,7 +65,7 @@ def read_data():
 def main():
     all_imgs, y_all = read_data()
     augmented_img, augmented_y = augment_images(all_imgs, y_all)
-    
+
     # dataset creation
     all_dataset = FrameDataset(all_imgs, y_all)
     augmented_dataset = FrameDataset(augmented_img, augmented_y)
@@ -75,10 +75,9 @@ def main():
     # for debugging purposes
     sample_all = all_dataset[0][0]
     sample_aug = augmented_dataset[0][0]
-    
+
     # training init
-    # Net = Nvidia(sample_aug.shape[2], sample_aug.shape[1])
-    Net = CarDenseModel()
+    Net = Nvidia()
     Runner = Trainer(Net)
     Runner.train('cardensemodel.pth', augmented_dataset)
 

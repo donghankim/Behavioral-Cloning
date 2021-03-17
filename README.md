@@ -24,12 +24,13 @@ After reading in your data, you can see that the range of steering angles are no
 Another issue with the dataset is the limited number of examples. Of course, you could technically record the simulator for hours and hours trying to collect as much data as you can, but thats just not efficient. Therefore, I decided to augment my data to include shiffted, brightness altered, shadowed and flipped images. Im not going to go in detail regarding the procedure to augment images since there is a ton of resources out there on the internet.
 
 ## Model Architecture & Training
-I have include 6 different network architecures in the model.py file. Model Navostha, CarModel, CarDenseModel and CarSimpleModel are from other users on github who have attemtped this project before (I included their network for comaparisson to my network). The network I created is derived from the Nvidia paper mentioned at the top of this README file.
+I have include 3 different network architecures in the model.py file. The Simple model is simply a very simple convolutional network that is used to demonstrate the lack of effectvieness for simple models. The Nvidia model is my own implementation of the Nvidia model with my own imporvements. And finally, I have also added a model obtained from a different github user to compare their results with mine.
 
 -- Image of network architecure
 
-Initially, I did try to normalize my images at input, but this proved to produce worse results. I also tried to add dropout in several layers, but again this did not produce good results. Therefore, I did not add any normalizations when training my network. However, by looking at the final result, the network does seem to generalize well on the simulator. Furthermore, using the RELU activation function also proved to produce undesirable results. It's interesting how changing the activation function to ELU produces much better results. I also trained my network for 25 epochs, making sure the network was not overfitting to the training data. 
+The Nvidia paper does not employ any kind of normalization. However, after extensive testing I found that without normalization the network fails to generalize. As a result, I have added normalization for all my convolutional layers. The initial inputs are normalized by the mean and standard deviations employed in the ImageNet dataset. After that, batch normalization is applied. Furthermore, to further decrease any overfitting from occuring, I have also added two dropout layers in my network (one at the end of the convolution layers, and one in the third fully-connected layer).
 
+While training, I found that using 25 epochs produced the best results. Any less will result in underfitting, while any more could lead to overfitting. The optimi
 
 
 

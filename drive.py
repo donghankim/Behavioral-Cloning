@@ -66,7 +66,7 @@ def telemetry(sid, data):
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
         tensor_img = process_img(image_array)
-
+        
         # predict the steering angle
         steering_angle = model(tensor_img.unsqueeze(0)).view(-1).data.numpy()[0]
         # steering_angle = 0.3
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         help='Path to image folder. This is where the images from the run will be saved.'
     )
     args = parser.parse_args()
-    model = CarModel()
+    model = Nvidia()
     model_path = os.path.join('model_weights', args.model)
     if os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path, map_location = torch.device('cpu')))

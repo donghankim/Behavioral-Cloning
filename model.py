@@ -79,11 +79,11 @@ class Nvidia(nn.Module):
         self.w, self.h = calc_out_size(self.w, self.h, 5,0,2)
 
         self.conv4 = nn.Conv2d(48, 64, 3, 1)
-        self.conv4_bn = nn.Conv2d(64)
+        self.conv4_bn = nn.BatchNorm2d(64)
         self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
 
         self.conv5 = nn.Conv2d(64, 64, 3, 1)
-        self.conv5_bn = nn.Conv2d(64)
+        self.conv5_bn = nn.BatchNorm2d(64)
         self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
 
         self.fc1 = nn.Linear(self.w*self.h*64, 1164)
@@ -112,7 +112,7 @@ class Nvidia(nn.Module):
         x = F.elu(self.fc5(x))
         return x
 
-# retrieved from 
+# retrieved from
 class CarModel(nn.Module):
     def __init__(self):
         super(CarModel, self).__init__()
