@@ -51,14 +51,11 @@ def read_data():
         all_imgs.append(center_img)
         all_imgs.append(left_img)
         all_imgs.append(right_img)
-        all_imgs.append(cv2.flip(left_img, 1))
-        all_imgs.append(cv2.flip(right_img, 1))
 
         y_all.append(angle)
         y_all.append(left_angle)
         y_all.append(right_angle)
-        y_all.append(left_angle*-1)
-        y_all.append(right_angle*-1)
+
 
     return all_imgs, y_all
 

@@ -16,12 +16,11 @@ def view_hist(y_values):
         else:
             values[y_values[i]] += 1
 
-
     total_imgs = sum(list(values.values()))
     fig, ax = plt.subplots(figsize = (16, 8))
     fig.subplots_adjust(bottom=0.15, left=0.2)
     ax.bar(values.keys(), values.values(), width = 0.005)
-    ax.set_title(f"Augmented Training Image Distribution ({total_imgs} images)")
+    ax.set_title(f"Image Distribution ({total_imgs} images)")
     ax.set_xlabel("Angle Value")
     plt.show()
     pdb.set_trace()
@@ -109,10 +108,8 @@ def augment_images(images, lables):
         augmented_y.append(y)
         augmented_y.append(y)
         augmented_y.append(flipped_y)
-    
     return augmented_images, augmented_y
 
-        
 # for model definition
 def calc_out_size(current_w, current_h, k_size, pooling, stride):
     w = int((current_w - k_size + 2*pooling)/stride + 1)
