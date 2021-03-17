@@ -25,7 +25,7 @@ The rest of this repository contains code for creating and training the neural n
 After reading in your data, you can see that the range of steering angles are not balanced. There are way to many 0.0 angle images, which will cause the network to output 0.0 for every single frame. Thus you first have to find a way to balance your dataset. I decided to randomly discard 85% of all 0.0 angles and images from the dataset. This might not be ideal, but it does balance the dataset. In addition, we have to include an offset angle to the left and right camera images. I didn't know how much offset I should I add, but after some googling I decided to offset the left camera angle by +0.22 and the right camera angle by -0.22. The histogram shows the image/angle distribution of the original dataset (left, center and right images). The reason why there is a spike on for angle -0.22, 0.00, and 0.22 is because these are the angles corresponding to the center image where the angle is 0.00.
 
 <div align="center">
-<img src="media/original_hist.png" width="400", height="300" >
+<img src="media/original_hist.png" width="500", height="300" >
 </div>
 
 ## Data Augmentation
