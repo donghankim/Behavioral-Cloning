@@ -31,10 +31,10 @@ After reading in your data, you can see that the range of steering angles are no
 ## Data Augmentation
 Another issue with the dataset is the limited number of examples. Of course, you could technically record the simulator for hours and hours trying to collect as much data as you can, but thats just not efficient. Therefore, I decided to augment my data to include shiffted, brightness altered, shadowed and flipped images. Im not going to go in detail regarding the procedure to augment images since there is a ton of resources out there on the internet.
 
-<p float="left">
-  <img src = "media/data_aug.png" width="250" />
-  <img src="/media/aug_histogram.png" width="200" />
-</p>
+<div align="center">
+  <img src = "media/data_aug.png" width="500" />
+  <img src="/media/aug_histogram.png" width="500" />
+</div>
 
 After the augmentation, we can see from the histogram, the dataset is much more balanced and ready to be used to train our network. Finally, before inserting my images into the network, I cropped them and normalized them to help increase the speed of training (also to decrease the chances of overfitting).
 
