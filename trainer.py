@@ -23,7 +23,7 @@ class Trainer():
 
         self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001)
-        self.epochs = 32
+        self.epochs = 42
 
         self.WEIGHT_PATH = 'model_weights/'
 

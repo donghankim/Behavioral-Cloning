@@ -14,11 +14,13 @@ from utils import *
 
 def read_data():
     # change this path if you want to try a different dataset
-    IMG_PATH = 'simulator_data/udacity_data/IMG'
+    DATA_PATH = 'simulator_data/udacity_data/'
+    IMG_PATH = os.path.join(DATA_PATH, 'IMG/')
+    CSV_PATH = os.path.join(DATA_PATH, 'driving_log.csv')
+    
     all_imgs = []
     y_all = []
-    # you also need to change this path
-    df = pd.read_csv('simulator_data/udacity_data/driving_log.csv')
+    df = pd.read_csv(CSV_PATH)
 
     print("\nReading Data...")
     for i in tqdm(range(len(df))):
@@ -44,7 +46,7 @@ def read_data():
         right_angle = angle - 0.22
 
         # to randomly get rid of zero angle images
-        drop_prob = np.random.randn()
+        drop_prob = np.random.random()
         if angle == 0 and drop_prob < 1.5:
             continue
 
@@ -62,7 +64,7 @@ def read_data():
 def main():
     all_imgs, y_all = read_data()
     augmented_img, augmented_y = augment_images(all_imgs, y_all)
-
+    
     # dataset creation
     all_dataset = FrameDataset(all_imgs, y_all)
     augmented_dataset = FrameDataset(augmented_img, augmented_y)
@@ -76,10 +78,10 @@ def main():
     # training init
     Net = Nvidia()
     Runner = Trainer(Net)
-    Runner.train('cardensemodel.pth', augmented_dataset)
+    Runner.train('last.pth', augmented_dataset)
 
     # evaluation
-    Runner.test('cardensemodel.pth', aug_val)
+    Runner.test('last.pth', aug_val)
 
 
 if __name__ == '__main__':
