@@ -86,13 +86,12 @@ class Nvidia(nn.Module):
         self.conv5_bn = nn.BatchNorm2d(64)
         self.w, self.h = calc_out_size(self.w, self.h, 3,0,1)
 
-        self.fc1 = nn.Linear(self.w*self.h*64, 1164)
-        self.fc2 = nn.Linear(1164, 100)
-        self.fc3 = nn.Linear(100, 50)
-        self.fc4 = nn.Linear(50, 10)
-        self.fc5 = nn.Linear(10, 1)
+        self.fc1 = nn.Linear(self.w*self.h*64, 100)
+        self.fc2 = nn.Linear(100, 50)
+        self.fc3 = nn.Linear(50, 10)
+        self.fc4 = nn.Linear(10, 1)
 
-        self.dropout = nn.Dropout()
+        self.dropout = nn.Dropout(p=0.4)
 
 
     def forward(self, x):
@@ -107,9 +106,7 @@ class Nvidia(nn.Module):
         x = F.elu(self.fc1(x))
         x = F.elu(self.fc2(x))
         x = F.elu(self.fc3(x))
-        x = self.dropout(x)
         x = F.elu(self.fc4(x))
-        x = F.elu(self.fc5(x))
         return x
 
 # retrieved from

@@ -47,7 +47,7 @@ def read_data():
 
         # to randomly get rid of zero angle images
         drop_prob = np.random.random()
-        if angle == 0 and drop_prob < 1.5:
+        if angle == 0 and drop_prob < 2.5:
             continue
 
         all_imgs.append(center_img)

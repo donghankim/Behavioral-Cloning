@@ -22,8 +22,8 @@ class Trainer():
         print(f"\nCuda Available: {next(self.model.parameters()).is_cuda}")
 
         self.criterion = nn.MSELoss()
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001)
-        self.epochs = 42
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-04)
+        self.epochs = 24
 
         self.WEIGHT_PATH = 'model_weights/'
 
